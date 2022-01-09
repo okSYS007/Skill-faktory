@@ -1,78 +1,42 @@
-#Напишите функцию add, которая добавляет задачу в конец очереди. 
-# Также учтите, что размер массива ограничен и при достижении этого предела, 
-# необходимо перенести указатель в положение 0. Также обратите внимание 
-# на области видимости переменных tail и order. После добавления задачи в очередь, 
-# она должна вывести уведомление об этом в формате:
-#"Задача №1 добавлена"
+class BinaryTree:
+    def __init__(self, value):
+        self.value = value
+        self.left_child = None
+        self.right_child = None
 
-
-def is_empty():
-     return head == tail and queue[head] == 0
-
-def size():
-    if is_empty(): # если она пуста
-        return 0 # возвращаем ноль
-    elif head == tail: # иначе, если очередь не пуста, но указатели совпадают
-        return N_max # значит очередь заполнена
-    elif head > tail: # если хвост очереди сместился в начало списка
-        return N_max - head + tail
-    else: # или если хвост стоит правее начала
-        return tail - head
-
-def add():
-    global tail, order  
-    order += 1 # увеличиваем порядковый номер задачи
-    queue[tail] = order # добавляем его в очередь
-    print("Задача №%d добавлена" % (queue[tail]))
-    
-    # увеличиваем указатель на 1 по модулю максимального числа элементов
-    # для зацикливания очереди в списке
-    tail = (tail + 1) % N_max  
-
-def top(): # выводим приоритетную задачу
-    print("Задача №%d в приоритете" % (queue[head]))
-
-def do(): # выполняем приоритетную задачу
-    global head
-    print("Задача №%d выполнена" % (queue[head]))
-    queue[head] = 0 # после выполнения зануляем элемент по указателю
-    head = (head + 1) % N_max # и циклично перемещаем указатель
-
-N_max = int(input("Определите размер очереди:"))
-
-queue = [0 for _ in range(N_max)] # инициализируем список с нулевыми элементами
-order = 0 # будем хранить сквозной номер задачи
-head = 0 # указатель на начало очереди
-tail = 0 # указатель на элемент следующий за концом очереди  
-
-while True:
-    cmd = input("Введите команду:")
-    if cmd == "empty": 
-        if is_empty():
-            print("Очередь пустая")
+    def insert_left(self, next_value):
+        if self.left_child is None:
+            self.left_child = BinaryTree(next_value)
         else:
-            print("В очереди есть задачи")
-    elif cmd == "size":
-        print("Количество задач в очереди:", size())
-    elif cmd == "add": 
-        if size() != N_max:
-            add()
+            new_child = BinaryTree(next_value)
+            new_child.left_child = self.left_child
+            self.left_child = new_child
+        return self
+
+    def insert_right(self, next_value):
+        if self.right_child is None:
+            self.right_child = BinaryTree(next_value)
         else:
-            print("Очередь переполнена")
-    elif cmd == "top": 
-        if is_empty():
-            print("Очередь пустая")
-        else:
-            top()
-    elif cmd == "do": 
-        if is_empty():
-            print("Очередь пустая")
-        else:
-            do()
-    elif cmd == "exit": 
-        for _ in range(size()):
-            do()
-        print("Очередь пустая. Завершение работы")
-        break
-    else:
-        print("Введена неверная команда")
+            new_child = BinaryTree(next_value)
+            new_child.right_child = self.right_child
+            self.right_child = new_child
+        return self
+
+A_node = BinaryTree('2').insert_left('7').insert_right('5')
+A_node.left_child = BinaryTree('7').insert_left('2').insert_right('6')
+A_node.left_child.right_child = BinaryTree('6').insert_left('5').insert_right('11')
+A_node.right_child = BinaryTree('5').insert_right('9')
+A_node.right_child.right_child.right_child = BinaryTree('4')
+
+# создаем корень и его потомки /7|2|5\
+node_root = BinaryTree(2).insert_left(7).insert_right(5)
+# левое поддерево корня /2|7|6\
+node_7 = node_root.left_child.insert_left(2).insert_right(6)
+# правое поддерево предыдущего узла /5|6|11\
+node_6 = node_7.right_child.insert_left(5).insert_right(11)
+# правое поддерево корня /|5|9\
+node_5 = node_root.right_child.insert_right(9)
+# левое поддерево предыдущего узла корня /4|9|\
+node_9 = node_5.right_child.insert_left(4)
+
+print('ss')
